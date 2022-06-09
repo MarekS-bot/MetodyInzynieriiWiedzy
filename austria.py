@@ -318,7 +318,7 @@ class MIW:
 
     @staticmethod
     def dot_operator(vec1, vec2):
-        return sum([i + j for (i, j) in zip(vec1, vec2)])
+        return np.dot(vec1, vec2)
 
     @staticmethod
     def average(vector: typ.List[float]) -> float:
@@ -404,6 +404,10 @@ class MIW:
     # ===================================================================================== #
 
     @staticmethod
+    def norma(vec1, vec2):
+        return np.sqrt(MIW.dot_operator(vec1, vec2))
+
+    @staticmethod
     def find_betas_from_file():
         x = []
         y = []
@@ -434,51 +438,29 @@ class MIW:
             return u
         return (u_v / u_u) * u
 
-    @staticmethod
-    def QR_decomposition(matrix):
-        u_set = [matrix[0]]
-        for i in range(1, len(matrix)):
-            u_set.append(matrix[i] - MIW.proj(u_set[i - 1], matrix[i]))
-        Q = []
-        for i in range(len(u_set)):
-            Q.append(u_set[i] / math.sqrt(sum([math.pow(el, 2) for el in u_set[i]])))
-        Q = np.array(Q)
-        QT = Q.T
-        R = np.dot(matrix, QT)
-        return R.T
 
 # ===================================================================================== #
 
     @staticmethod
-    def Q_decomposition(a_matrix):
-        v_list = [[vec[i] for vec in a_matrix] for i in range(len(a_matrix[1]))]
-        u_list = []
-        q = []
-        for v in v_list:
-            v = np.array(v)
-            sum_proj = 0
-            for u_x in u_list:
-                sum_proj += MIW.proj(u_x, v)
-            u = v - sum_proj
-            u_list.append(u)
-            u_len = math.sqrt(np.dot(u.T, u))
-            if u_len == 0:
-                e = u
-            else:
-                e = (1 / u_len) * u
-            q.append(e)
-        return np.array(q).T
+    def Q_decomposition(A: np.ndarray):
+        n, m = A.shape
+        u = np.zeros((n, m))
+        u[:, 0] = A[:, 0] / np.linalg.norm(A[:, 0])
+        Q = np.zeros((n, m))
+        Q[:, 0] = u[:, 0]
+        for i in range(1, m):
+            u_prev = u[:, i - 1]
+            u[:, i] = A[:, i] - (
+                    np.dot(A[:, i].T, u_prev) / np.dot(u_prev.T, u_prev)
+            ) * u_prev
+            Q[:, i] = u[:, i] / np.linalg.norm(u[:, i])
+        return Q
 
     @staticmethod
-    def matrix_eigenvalues(a):
-        new_a = a
-        i = 0
-        while (np.diag(new_a) - np.dot(new_a, np.ones((new_a.shape[0], 1))).T).all() > 0.001:
-            q = MIW.Q_decomposition(new_a)
-            new_a = np.dot(np.dot(q.T, a), q)
-            i += 1
-        return np.diag(new_a)
-
+    def QR_decomposition(A: np.ndarray):
+        Q = MIW.Q_decomposition(A)
+        R = np.dot(Q.T, A)
+        return Q, R
 
 # ===================================================================================== #
 
@@ -499,3 +481,35 @@ class MIW:
             x[k] = (B[k] - np.dot(A[k, k+1:], x[k+1:]))/A[k, k]
             k -= 1
         return x
+
+# ===================================================================================== #
+
+    # @staticmethod
+    # def matrix_eigenvalues(a):
+    #     new_a = a
+    #     i = 0
+    #     while (np.diag(new_a) - np.dot(new_a, np.ones((new_a.shape[0], 1))).T).all() > 0.001:
+    #         q = MIW.Q_decomposition(new_a)
+    #         new_a = np.dot(np.dot(q.T, a), q)
+    #         i += 1
+    #     return np.diag(new_a)
+
+
+    @staticmethod
+    def svd(A: np.ndarray):
+        n, m = A.shape
+        U = np.zeros((n, n))
+        S = np.zeros((n, m))
+        V = np.zeros((m, m))
+
+        eigen_val, eigen_vec = np.linalg.eig(np.dot(A, A.T)) # [4., 9.]
+        for i in range(len(eigen_val)):
+            S[i, i] = np.sqrt(eigen_val[i])
+        for i in range(len(eigen_vec)):
+            U[:, i] = 1/np.linalg.norm(eigen_vec[i]) * eigen_vec[i]
+        S_inv = np.zeros((n, m))
+        for i in range(S.shape[0]):
+            S_inv[i, i] = 1/S[i, i]
+        V = np.dot(np.dot(A.T, U), S_inv)
+        VT = V.T
+        return U, S, VT

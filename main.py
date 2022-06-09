@@ -5,7 +5,117 @@ from austria import *
 
 
 if __name__ == "__main__":
-    print("Hello")
+
+    A = np.array([[1., 2., 0.], [2., 0., 2.], [2, 2, 0]])
+
+    MIW.svd(A)
+
+    # Q, R = MIW.QR_decomposition2(A)
+    # print(f"Q: {Q}")
+    # print(f"R: {R}")
+
+    # vec1 = [1] * 8
+    # vec2 = [1]*4 + [-1]*4
+    # vec3 = [1]*2 + [-1]*2 + [0]*4
+    # vec4 = [0]*4 + [1]*2 + [-1]*2
+    # vec5 = [1, -1] + [0]*6
+    # vec6 = [0, 0, 1, -1] + [0]*4
+    # vec7 = [0]*4 + [1, -1] + [0]*2
+    # vec8 = [0]*6 + [1, -1]
+    # matrix = np.array([vec1, vec2, vec3, vec4, vec5, vec6, vec7, vec8]).reshape(8, 8)
+    #
+    # print(MIW.dot_operator(vec1, vec1), end=" ")
+    # print(MIW.dot_operator(vec2, vec2), end=" ")
+    # print(MIW.dot_operator(vec3, vec3), end=" ")
+    # print(MIW.dot_operator(vec4, vec4), end=" ")
+    # print(MIW.dot_operator(vec5, vec5), end=" ")
+    # print(MIW.dot_operator(vec6, vec6), end=" ")
+    # print(MIW.dot_operator(vec7, vec7), end=" ")
+    # print(MIW.dot_operator(vec8, vec8))
+    #
+    # print("Macierz: ")
+    # print(matrix)
+    # print("Macierz trans: ")
+    # print(matrix.T)
+    # print("Dot oper: ")
+    # matrix_dot = MIW.dot_operator(matrix, matrix.T)
+    # print(matrix_dot)
+    #
+    # inverse = np.linalg.inv(matrix_dot)
+    # trans = inverse.T
+    # xa = np.array([8, 6, 2, 3, 4, 6, 6, 5]).T
+    # xb = np.dot(trans, xa)
+    # print(xb)
+    # xb = np.dot(inverse, xa)
+    # print(xb)
+
+    """
+    sigma_i = sqrt( lambda_i )
+    Av_1/sigma_1 = U_1
+    (Av_1)T = v_1 T * AT
+    (Avi)T(Avi) = v_i^T A^T * v_i * A = v_i^t * lambda_i * v_i
+    A = U SIGMA VT
+    MxN = MxM MxN NxN
+    Lewe (środkowe) prawe
+        
+    AAT = [][] = (5-l)(8-l)-4 = l^2 -13l + 36
+    d = 25
+    l1 = 4
+    l2 = 9
+    sigma_1 = 2
+    sigma_2 = 3
+    
+    AAT u1 - l1 u1 = 0
+    (AAT - l1 I)u1 = 0
+    [5 - 9   2  ] [u1^1]  
+    [ 2    8 - 9] [u1^2] = 0
+    -4ui^1 + 2u1^2 = 0
+    2u1^1 - u1^2 = 0 / *2
+    4u1^1 = 2u1^2
+    2u1^1 = u1^2
+    u1^1 = 1 => u1^2 = 2
+    
+    u1 = alpha[1 2]T
+    aby u1 było 1
+    u1 = 1/sqrt(5)[1 2]T
+    
+          [1 2]             [5 2 4]
+          [2 0]   [1 2 0]   [2 4 0]
+    ATA = [0 2] * [2 0 2] = [4 0 4]
+    
+    (ATA - lI)v = 0
+    det(^^^) = (5-l)(4-l)(4-l) - 20(4-l) = (4-l)[(5-l)(4-l)-20]
+    l = 4
+    (5-l)(4-l)-20 = 0
+    l^2 - 9l = 0
+    
+    l=9
+    l=4
+    l=0
+    s1 = 3
+    s2 = 2
+    
+    [1 2 0]
+    [2 0 2]
+    
+    [5 - 9  2    4 ]    [v1^1]
+    [2     4-9   0 ]    [v1^2]
+    [4      0   4-9] =  [v1^3] = 0
+    2v1^1 = 5v1^2
+    4v1^1 = 5v1^3
+    v1^1 = 5
+    
+    2*5 = 5v1^2
+    v1^2 = 2
+    v1^3 = 4
+    
+    v1 = alpha[5 2 4]T
+    v1 = 1/3sqrt(5) [5 2 4]T
+    v2 = 1/sqrt(5)[0 2 -1]T
+    v3 = 1/3[-2 1 2]T
+    A = U SIGMA VT
+    A = 1/sqrt(5)[1 2][2 -1]
+"""
 
 # Main
 # if __name__ == "__main__":
@@ -166,7 +276,7 @@ if __name__ == "__main__":
 
     # a=np.array([[1.,2.,3.,4.,5.],[2.,2.,3.,4.,5.],[3.,3.,3.,4.,5.],[4.,4.,4.,4.,5.],[5.,5.,5.,5.,5.]])
     # print(MIW.dekompozycja_Q(a))
-    print("\n\n")
+    # print("\n\n")
     # A = np.array([[6, 2], [3, 1]])
     # eigenvalues = MIW.matrix_eigenvalues(A)
     # eigenvalues = np.linalg.eig(A)
@@ -204,3 +314,5 @@ if __name__ == "__main__":
     # A = np.array([[1., -1., 1., -1.], [1., 0., 0., 0.], [1., 1., 1., 1.], [1., 2., 4., 8.]])
     # B = np.array([[14.], [4.], [2.], [2.]])
     # print(MIW.gauss_elimination(np.copy(A), np.copy(B)))
+
+
